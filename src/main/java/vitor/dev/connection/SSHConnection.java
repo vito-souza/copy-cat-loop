@@ -10,28 +10,27 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+/**
+ * A classe {@code SSHConnection} permite conectar-se a um servidor remoto via
+ * SSH
+ * e executar comandos. Utiliza a biblioteca JSch para estabelecer a conexão e
+ * capturar a saída dos comandos executados.
+ */
 public class SSHConnection {
 
+    /** Instância da classe JSch para gerenciar a conexão SSH. */
     static JSch jsch = new JSch();
+
+    /** Sessão SSH para estabelecer a conexão. */
     static Session session;
 
     /**
-     * Estabelece uma conexão SSH com o servidor especificado usando o usuário,
-     * senha e porta fornecidos.
-     * 
-     * <p>
-     * Este método cria uma sessão SSH, configura a senha e a opção para ignorar a
-     * verificação da chave de host,
-     * e, em seguida, tenta conectar ao servidor. Se a conexão não for estabelecida,
-     * uma mensagem de erro será exibida.
-     * </p>
-     * 
-     * @param user     O nome de usuário utilizado para autenticação no servidor
-     *                 SSH.
-     * @param host     O endereço IP ou nome de domínio do servidor SSH.
-     * @param password A senha do usuário no servidor SSH.
-     * @param port     A porta na qual o servidor SSH está escutando. O padrão
-     *                 geralmente é 22.
+     * Estabelece uma conexão SSH com o servidor usando as credenciais fornecidas.
+     *
+     * @param user     O nome de usuário para autenticação no servidor SSH.
+     * @param host     O endereço do servidor SSH.
+     * @param password A senha do usuário.
+     * @param port     A porta do servidor SSH (geralmente 22).
      */
     public static void connect(String user, String host, String password, int port) {
         // Iniciando uma sessão SSH:
@@ -42,8 +41,7 @@ public class SSHConnection {
             // Configurando para ignorar verificações de chave de host.
             session.setConfig("StrictHostKeyChecking", "no");
 
-            // Conectando ao servidor
-            session.connect();
+            session.connect(); // Conectando ao servidor.
 
             System.out.println("Conexão estabelecida com o host.");
         } catch (JSchException e) {
@@ -53,14 +51,10 @@ public class SSHConnection {
     }
 
     /**
-     * Executa um comando em um servidor remoto via SSH e exibe a saída.
-     * 
-     * Este método cria um canal SSH para executar o comando fornecido no servidor
-     * remoto. Após a execução do comando, ele captura e exibe a saída gerada.
+     * Executa um comando remoto via SSH e exibe a saída.
      *
-     * @param command O comando a ser executado no servidor remoto.
-     * @throws JSchException Se ocorrer um erro ao tentar estabelecer o canal SSH
-     *                       ou ao executar o comando.
+     * @param command O comando a ser executado.
+     * @throws JSchException Se ocorrer erro ao executar o comando.
      */
     public static void command(String command) {
         try {
@@ -68,14 +62,11 @@ public class SSHConnection {
             Channel channel = session.openChannel("exec");
             ((ChannelExec) channel).setCommand(command); // Definindo o comando a ser executado pelo channel.
 
-            // Se conectando ao canal para receber respostas.
-            channel.connect();
+            channel.connect(); // Se conectando ao canal para receber respostas.
 
-            // Capturando e exibindo saída do comando.
-            System.out.println(captureCommandOutput(channel));
+            System.out.println(captureCommandOutput(channel)); // Capturando e exibindo saída do comando.
 
-            // Fechando o canal após a execução.
-            channel.disconnect();
+            channel.disconnect(); // Fechando o canal após a execução.
         } catch (JSchException e) {
             System.out.println("Não foi executar o comando.");
             e.printStackTrace(); // Pilha de execução.
@@ -83,14 +74,11 @@ public class SSHConnection {
     }
 
     /**
-     * Captura a saída de um comando executado em um canal SSH.
-     * 
-     * Este método lê a saída do comando enviado ao canal SSH, armazenando-a em um
-     * `StringBuilder`, e a retorna como uma string.
+     * Captura e retorna a saída de um comando executado via SSH.
      *
-     * @param channel O canal SSH (`Channel`) onde o comando foi executado.
-     * @return A saída do comando como uma string.
-     * @throws IOException Se ocorrer um erro ao tentar ler a saída do comando.
+     * @param channel O canal SSH onde o comando foi executado.
+     * @return A saída do comando.
+     * @throws IOException Se ocorrer erro ao ler a saída.
      */
     private static String captureCommandOutput(Channel channel) {
         StringBuilder output = new StringBuilder(); // Para armazenar a saída do comando.
@@ -112,9 +100,7 @@ public class SSHConnection {
     }
 
     /**
-     * Método principal que executa a aplicação.
-     * 
-     * @param args Argumentos da linha de comando (não utilizados).
+     * Método principal para testar a conexão SSH e execução de comandos.
      */
     public static void main(String[] args) {
         connect("ubuntu", "localhost", "ubuntu", 2222);
