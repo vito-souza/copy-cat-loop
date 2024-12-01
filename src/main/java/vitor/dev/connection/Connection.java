@@ -45,7 +45,7 @@ public class Connection {
 
             session.connect(); // Conectando ao servidor.
 
-            System.out.println("Conexão estabelecida com o host.");
+            System.out.println("Conexão estabelecida com o host: \"" + user + "@" + host + "\"");
         } catch (JSchException e) {
             System.out.println("Não foi possível estabelecer uma conexão com o host: " + e.getMessage() + "\n");
             e.printStackTrace(); // Pilha de execução.
@@ -66,7 +66,6 @@ public class Connection {
             channel.setCommand(command); // Definindo o comando a ser executado pelo channel.
 
             channel.connect(); // Se conectando ao canal para receber respostas.
-
             System.out.println(captureCommandOutput(channel)); // Capturando e exibindo saída do comando.
 
             channel.disconnect(); // Fechando o canal após a execução.
@@ -88,6 +87,8 @@ public class Connection {
             channel.connect();
 
             channel.put(fromPath, toPath); // Transferir o arquivo de um local para o outro.
+            System.out.println("Arquivo \"" + fromPath + "\" transferido com sucesso para \"" + toPath + "\"");
+
             channel.disconnect();
         } catch (JSchException | SftpException e) {
             System.out.println("Não foi possível executar a transferência: " + e.getMessage() + "\n");
@@ -119,13 +120,5 @@ public class Connection {
         }
 
         return output.toString(); // Retornando a saída do comando.
-    }
-
-    /**
-     * Método principal para testar a conexão SSH e execução de comandos.
-     */
-    public static void main(String[] args) {
-        connect("ubuntu", "localhost", "ubuntu", 2222);
-        command("ifconfig");
     }
 }
