@@ -6,9 +6,11 @@ import java.io.InputStreamReader;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 
 /**
  * A classe {@code SSHConnection} permite conectar-se a um servidor remoto via
@@ -16,7 +18,7 @@ import com.jcraft.jsch.Session;
  * e executar comandos. Utiliza a biblioteca JSch para estabelecer a conexão e
  * capturar a saída dos comandos executados.
  */
-public class SSHConnection {
+public class Connection {
 
     /** Instância da classe JSch para gerenciar a conexão SSH. */
     static JSch jsch = new JSch();
@@ -45,7 +47,7 @@ public class SSHConnection {
 
             System.out.println("Conexão estabelecida com o host.");
         } catch (JSchException e) {
-            System.out.println("Não foi possível estabelecer uma conexão com o host.");
+            System.out.println("Não foi possível estabelecer uma conexão com o host: " + e.getMessage() + "\n");
             e.printStackTrace(); // Pilha de execução.
         }
     }
@@ -58,9 +60,10 @@ public class SSHConnection {
      */
     public static void command(String command) {
         try {
-            // Criando o canal para execução de comandos:
-            Channel channel = session.openChannel("exec");
-            ((ChannelExec) channel).setCommand(command); // Definindo o comando a ser executado pelo channel.
+            // Criando o canal para execução de comandos e definindo o comando a ser
+            // executado
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            channel.setCommand(command); // Definindo o comando a ser executado pelo channel.
 
             channel.connect(); // Se conectando ao canal para receber respostas.
 
@@ -68,7 +71,26 @@ public class SSHConnection {
 
             channel.disconnect(); // Fechando o canal após a execução.
         } catch (JSchException e) {
-            System.out.println("Não foi executar o comando.");
+            System.out.println("Não foi possível executar o comando: " + e.getMessage() + "\n");
+            e.printStackTrace(); // Pilha de execução.
+        }
+    }
+
+    /**
+     * Transfere um arquivo de um caminho local para um caminho remoto usando SFTP.
+     *
+     * @param fromPath O caminho do arquivo local a ser transferido.
+     * @param toPath   O caminho remoto para onde o arquivo será transferido.
+     */
+    public static void transfer(String fromPath, String toPath) {
+        try {
+            ChannelSftp channel = (ChannelSftp) session.openChannel("sftp"); // Canal de transferência.
+            channel.connect();
+
+            channel.put(fromPath, toPath); // Transferir o arquivo de um local para o outro.
+            channel.disconnect();
+        } catch (JSchException | SftpException e) {
+            System.out.println("Não foi possível executar a transferência: " + e.getMessage() + "\n");
             e.printStackTrace(); // Pilha de execução.
         }
     }
@@ -92,7 +114,7 @@ public class SSHConnection {
                 output.append(line).append("\n"); // Atribuíndo a respota ao objeto.
             }
         } catch (IOException e) {
-            System.out.println("Erro ao ler a saída do comando.");
+            System.out.println("Erro ao ler a saída do comando: " + e.getMessage() + "\n");
             e.printStackTrace(); // Pilha de execução.
         }
 
@@ -104,6 +126,6 @@ public class SSHConnection {
      */
     public static void main(String[] args) {
         connect("ubuntu", "localhost", "ubuntu", 2222);
-        command("pwd");
+        command("ifconfig");
     }
 }
