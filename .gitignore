@@ -1,2 +1,2 @@
-./src/main/resources/scripts/
-./target/classes/scripts/
+/src/main/resources/scripts/*
+/target/classes/scripts/*
