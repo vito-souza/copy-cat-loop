@@ -20,10 +20,7 @@ import com.jcraft.jsch.SftpException;
  */
 public class Connection {
 
-    /** Instância da classe JSch para gerenciar a conexão SSH. */
     static JSch jsch = new JSch();
-
-    /** Sessão SSH para estabelecer a conexão. */
     static Session session;
 
     /**
@@ -35,7 +32,6 @@ public class Connection {
      * @param port     A porta do servidor SSH (geralmente 22).
      */
     public static void connect(String user, String host, String password, int port) {
-        // Iniciando uma sessão SSH:
         try {
             session = jsch.getSession(user, host, port); // Cria uma sessão SSH.
             session.setPassword(password); // Insere a senha do servidor SSH.

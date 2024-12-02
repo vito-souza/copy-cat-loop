@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "DirectoryWatcher",
+            "request": "launch",
+            "mainClass": "vitor.dev.utils.DirectoryWatcher",
+            "projectName": "copy-cat-loop"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
