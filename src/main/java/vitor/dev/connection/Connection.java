@@ -2,7 +2,9 @@ package vitor.dev.connection;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -66,6 +68,36 @@ public class Connection {
 
             channel.disconnect(); // Fechando o canal após a execução.
         } catch (JSchException e) {
+            System.out.println("Não foi possível executar o comando: " + e.getMessage() + "\n");
+            e.printStackTrace(); // Pilha de execução.
+        }
+    }
+
+    /**
+     * Executa um comando remoto via SSH com permissões sudo e exibe a saída.
+     *
+     * @param command O comando a ser executado.
+     * @throws JSchException Se ocorrer erro ao executar o comando.
+     */
+    public static void sudoCommand(String command, String sudoPasswd) {
+        try {
+            // Criando o canal para execução de comandos e definindo o comando a ser
+            // executado
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            ((ChannelExec) channel).setCommand("sudo -S -p '' " + command);
+
+            OutputStream out = channel.getOutputStream();
+            ((ChannelExec) channel).setErrStream(System.err);
+
+            channel.connect();
+
+            out.write((sudoPasswd + "\n").getBytes());
+            out.flush();
+
+            System.out.println(captureCommandOutput(channel)); // Capturando e exibindo saída do comando.
+
+            channel.disconnect(); // Fechando o canal após a execução.
+        } catch (IOException | JSchException e) {
             System.out.println("Não foi possível executar o comando: " + e.getMessage() + "\n");
             e.printStackTrace(); // Pilha de execução.
         }

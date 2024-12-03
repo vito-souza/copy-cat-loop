@@ -9,6 +9,7 @@ public class Main {
     private static final String PASSWD = "ubuntu";
     private static final String REMOTE_PATH = "/home/ubuntu/Vitor";
     private static final String LIB = "src\\main\\resources\\scripts\\";
+    private static final String SUDO_PASSWD = "ubuntu";
     private static final int PORT = 2222;
 
     /**
@@ -18,7 +19,7 @@ public class Main {
         // Corrigindo caminho para usar LIB (no Windows)
         Connection.transfer(LIB + "attack.sh", REMOTE_PATH);
         Connection.command("chmod +x " + REMOTE_PATH + "/attack.sh");
-        Connection.command("timeout 1m bash " + REMOTE_PATH + "/attack.sh");
+        Connection.sudoCommand("bash " + REMOTE_PATH + "/attack.sh", SUDO_PASSWD);
     }
 
     /**
@@ -28,7 +29,8 @@ public class Main {
         // Corrigindo caminho para usar LIB (no Windows)
         Connection.transfer(LIB + "defense.sh", REMOTE_PATH);
         Connection.command("chmod +x " + REMOTE_PATH + "/defense.sh");
-        Connection.command("timeout 1m bash " + REMOTE_PATH + "/defense.sh");
+        Connection.sudoCommand("bash " + REMOTE_PATH + "/defense.sh", SUDO_PASSWD);
+        // Connection.command("rm /defense.sh");
     }
 
     /**
@@ -42,6 +44,7 @@ public class Main {
 
     public static void main(String[] args) {
         setup();
-        defense();
+        // defense();
+        // attack();
     }
 }
