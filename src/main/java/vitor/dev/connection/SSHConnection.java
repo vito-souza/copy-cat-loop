@@ -48,14 +48,31 @@ public class SSHConnection {
         }
     }
 
+    /**
+     * Executa um comando SSH no servidor remoto.
+     *
+     * @param command O comando a ser executado.
+     */
     public static void command(String command) {
         executeCommand(command, null);
     }
 
+    /**
+     * Executa um comando SSH com privilégios de superusuário no servidor remoto.
+     *
+     * @param command    O comando a ser executado.
+     * @param sudoPasswd A senha do superusuário para autenticação.
+     */
     public static void sudoCommand(String command, String sudoPasswd) {
         executeCommand(command, sudoPasswd);
     }
 
+    /**
+     * Executa um comando no servidor remoto, podendo incluir senha de superusuário.
+     *
+     * @param command    O comando a ser executado.
+     * @param sudoPasswd A senha do superusuário (pode ser null se não necessário).
+     */
     private static void executeCommand(String command, String sudoPasswd) {
         try {
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
