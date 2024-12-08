@@ -8,10 +8,9 @@ import vitor.dev.connection.SSHConnection;
 public class Main {
 
     public static void main(String[] args) {
-        SSHConnection connection = new SSHConnection();
 
         List<String[]> connectionData = new ArrayList<>();
-        connectionData.add(new String[] { "ubuntu", "localhost", "ubuntu", "/home/ubuntu/Vitor", "22" });
+        connectionData.add(new String[] { "ubuntu", "localhost", "ubuntu", "/home/ubuntu/Vitor", "2222" });
 
         connectionData.forEach(data -> {
             String user = data[0];
@@ -19,6 +18,8 @@ public class Main {
             String password = data[2];
             String remotePath = data[3];
             int port = Integer.parseInt(data[4]);
+
+            SSHConnection connection = new SSHConnection();
 
             connection.connect(user, host, password, port);
             connection.command(
