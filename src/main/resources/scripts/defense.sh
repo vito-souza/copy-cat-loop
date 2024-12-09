@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DIR="/home/ubuntu/Vitor"
-LOG_FILE="/home/ubuntu/inotify.log"
+DIR="/home/vitor/GuerraArquivos"
+LOG_FILE="/home/vitor/inotify.log"
 SCRIPT_PID=$$
 
 inotifywait -m -r $DIR -e create -e moved_to -e move_self -e delete_self | while read -r path action file
